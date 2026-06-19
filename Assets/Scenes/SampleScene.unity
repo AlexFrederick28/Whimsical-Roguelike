@@ -274,7 +274,7 @@ MonoBehaviour:
   distanceZ: -10
   heightY: 10
   rotationSpeed: 20
-  zoomSpeed: 40
+  zoomSpeed: 50
   maxHeight: 1
   minHeight: 1
   swivelRadius: 1

@@ -68,15 +68,18 @@ public class SwivelCamera : MonoBehaviour
 
     public void ZoomCameraAction(InputAction.CallbackContext context)
     {
-        // need to ensure the camera doesnt go above or below the min/max heights
+        // need to check with state machine if the player camera should be zooming in when scrolling
+
         scrollInput = context.action.ReadValue<Vector2>();
 
         if (scrollInput.y > 0)
         {
+            if (camera.transform.position.y <= minHeight) { return; }
             camera.transform.Translate(Vector3.forward * zoomSpeed * Time.deltaTime);
         }
         else if (scrollInput.y < 0)
         {
+            if (camera.transform.position.y >= maxHeight) { return; }
             camera.transform.Translate(Vector3.back * zoomSpeed * Time.deltaTime);
         }
     }
