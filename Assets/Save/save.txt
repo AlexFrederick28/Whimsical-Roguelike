@@ -1,0 +1,1 @@
+{"playerPosition":{"x":0.353549987077713,"y":0.9340000152587891,"z":0.353549987077713},"cameraRotationSpeed":0.0,"cameraZoomSpeed":0.0}

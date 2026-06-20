@@ -13,21 +13,23 @@ public class SwivelCamera : MonoBehaviour
     [SerializeField] private Transform target;
     [SerializeField] private float distanceZ = 10.0f;
     [SerializeField] private float heightY = 2.0f;
-    [SerializeField] private float rotationSpeed = 5.0f;
-    [SerializeField] private float zoomSpeed = 1.0f;
+    public float rotationSpeed { get; private set; }
+    public float zoomSpeed { get; private set; }
     [SerializeField] private float maxHeight = 1.0f;
     [SerializeField] private float minHeight = 1.0f;
-    [SerializeField] private float swivelRadius = 1.0f;
+    [SerializeField] private float swivelRadius = 1.0f; // unused so far
     [SerializeField] private Vector2 mouseDelta;
     [SerializeField] private Vector2 scrollInput;
     private bool holdingRightMouse = false;
 
     private void OnEnable()
     {
+        rotationSpeed = 50.0f;
+        zoomSpeed = 50.0f;
         camera.transform.localPosition = new Vector3(0, heightY, distanceZ);
     }
 
-    private void FixedUpdate()
+    private void LateUpdate()
     {
         SwivelCameraFunction();
     }
@@ -52,6 +54,8 @@ public class SwivelCamera : MonoBehaviour
         if (holdingRightMouse == true)
         {
             mouseDelta = Pointer.current.delta.ReadValue();
+            Vector3 cameraPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            Vector3 targetPosition = new Vector3(target.position.x, transform.position.y, target.position.z);
 
             if (mouseDelta.x > 0)
             {
