@@ -16,6 +16,8 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector2 inputVector;
     [SerializeField] private Vector3 moveDirection;
 
+    private bool moveCancelled = false;
+
     private void Update()
     {
         Movement();
@@ -24,6 +26,15 @@ public class PlayerMovement : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         inputVector = context.ReadValue<Vector2>();
+
+        if (context.canceled)
+        {
+            moveCancelled = true;
+        }
+        else
+        {
+            moveCancelled = false;
+        }
     }
 
     private void Movement()
@@ -34,8 +45,9 @@ public class PlayerMovement : MonoBehaviour
         camRight.y = 0.0f;
 
         moveDirection = (camForward.normalized * inputVector.y).normalized + (camRight * inputVector.x).normalized;
-        characterController.Move(moveDirection * speed * Time.deltaTime);
+        characterController.Move(moveDirection.normalized * speed * Time.deltaTime);
 
+        if (moveCancelled) { return; } // stops the character from rotating back to the default position
         characterView.rotation = Quaternion.LookRotation(moveDirection);
     }
 }

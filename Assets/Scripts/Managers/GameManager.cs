@@ -14,8 +14,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject playerObject;
     [SerializeField] private PlayerSettings playerSettings;
 
+    static GameManager instance;
+
     private void Awake()
     {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+
         DontDestroyOnLoad(gameObject);
 
         SaveData saveData = new SaveData
@@ -69,7 +80,7 @@ public class GameManager : MonoBehaviour
                 playerObject.transform.position = saveData.playerPosition;
 
                 // camera (still need to setup a way to access the player camera)
-
+                
             }
             else
             {
