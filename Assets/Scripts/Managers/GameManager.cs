@@ -1,6 +1,7 @@
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.Rendering;
 
 public class GameManager : MonoBehaviour
 {
@@ -8,11 +9,12 @@ public class GameManager : MonoBehaviour
     // dont have excess bloat loaded in the main menu
     // load the extra managers and whatnot when entering the game
     // load save files
-
-    [SerializeField] private string saveDirectory = "/Save/save.txt";
+    public GameObject currentOpenedU { get; private set; }
+    
     [SerializeField] private GameObject playerPrefab; // should load the player in 
     [SerializeField] private GameObject playerObject;
-    [SerializeField] private PlayerSettings playerSettings;
+    [SerializeField] private CharacterController playerController;
+    [SerializeField] public PlayerSettings playerSettings;
 
     static GameManager instance;
 
@@ -29,17 +31,7 @@ public class GameManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
 
-        SaveData saveData = new SaveData
-        {
-            cameraRotationSpeed = 50.0f,
-            cameraZoomSpeed = 50.0f
-        };
-
-        string json = JsonUtility.ToJson(saveData);
-        Debug.Log(json);
-
-        SaveData loadedGameSave = JsonUtility.FromJson<SaveData>(json);
-        Debug.Log(loadedGameSave.cameraRotationSpeed);
+        SaveSystem.Init();
     }
 
     public void Save(InputAction.CallbackContext context)
@@ -59,9 +51,8 @@ public class GameManager : MonoBehaviour
             };
 
             string json = JsonUtility.ToJson(saveData);
+            SaveSystem.Save(json);
             Debug.Log(json);
-
-            File.WriteAllText(Application.dataPath + saveDirectory, json);
         }
     }
 
@@ -71,21 +62,34 @@ public class GameManager : MonoBehaviour
 
         if (context.performed)
         {
-            if (File.Exists(Application.dataPath + saveDirectory))
+            string saveString = SaveSystem.Load();
+
+            if (saveString != null)
             {
-                string saveString = File.ReadAllText(Application.dataPath + saveDirectory);
+                Debug.Log("Loaded save");
                 SaveData saveData = JsonUtility.FromJson<SaveData>(saveString);
 
                 // player
-                playerObject.transform.position = saveData.playerPosition;
+                playerController.Move(saveData.playerPosition - playerController.transform.position); // controller has full control over player position (cannot just use player.transform.position)
+                Debug.Log(saveData.playerPosition);
 
                 // camera (still need to setup a way to access the player camera)
-                
+
             }
             else
             {
                 Debug.LogError("No save file");
             }
         }
+    }
+
+    public void SetCamerSwivelSpeed(float value)
+    {
+        playerSettings.cameraRotationSpeed = value;
+    }
+
+    public void SetCameraZoomSpeed(float value)
+    {
+        playerSettings.cameraZoomSpeed = value;
     }
 }

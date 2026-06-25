@@ -47,7 +47,7 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = (camForward.normalized * inputVector.y).normalized + (camRight * inputVector.x).normalized;
         characterController.Move(moveDirection.normalized * speed * Time.deltaTime);
 
-        if (moveCancelled) { return; } // stops the character from rotating back to the default position
+        if (moveCancelled || moveDirection == Vector3.zero) { return; } // stops the character from rotating back to the default position
         characterView.rotation = Quaternion.LookRotation(moveDirection);
     }
 }
