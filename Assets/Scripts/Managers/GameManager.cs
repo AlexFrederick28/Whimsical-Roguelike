@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -9,14 +10,16 @@ public class GameManager : MonoBehaviour
     // dont have excess bloat loaded in the main menu
     // load the extra managers and whatnot when entering the game
     // load save files
-    public GameObject currentOpenedU { get; private set; }
+    public GameObject currentOpenedOverlay;
+
+    public static Action<OverlayPanelBase> SetOverlayPanel;
     
     [SerializeField] private GameObject playerPrefab; // should load the player in 
     [SerializeField] private GameObject playerObject;
     [SerializeField] private CharacterController playerController;
     [SerializeField] public PlayerSettings playerSettings;
 
-    static GameManager instance;
+    public static GameManager instance;
 
     private void Awake()
     {
@@ -80,6 +83,21 @@ public class GameManager : MonoBehaviour
             {
                 Debug.LogError("No save file");
             }
+        }
+    }
+
+    public void OnPressClosePanel(InputAction.CallbackContext context)
+    {
+        if (currentOpenedOverlay == null) { return; }
+        else if (currentOpenedOverlay != null)
+        {
+            if (currentOpenedOverlay.GetComponentInParent<OverlayPanelBase>().isEscMenu) { return; } // ensures the esc menu doesnt close as soon as it opens
+        }
+
+        if (context.performed)
+        {
+            Debug.Log("Closing panels");
+            SetOverlayPanel?.Invoke(null);
         }
     }
 
