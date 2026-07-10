@@ -80,11 +80,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0c0682f3a90632f43b4afd0437cdba4b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
-  speed: 20
+  runSpeed: 20
+  fallSpeed: 10
+  gravity: -50
   characterController: {fileID: 6307871882025916502}
   characterView: {fileID: 3714495532192119146}
+  cameraTransform: {fileID: 8020157299706926515}
   inputVector: {x: 0, y: 0}
   moveDirection: {x: 0, y: 0, z: 0}
+  fallVelocity: {x: 0, y: 0, z: 0}
 --- !u!143 &6307871882025916502
 CharacterController:
   m_ObjectHideFlags: 0

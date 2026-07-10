@@ -10,13 +10,26 @@ public class GameManager : MonoBehaviour
     // dont have excess bloat loaded in the main menu
     // load the extra managers and whatnot when entering the game
     // load save files
+
+    // the registered on top UI overlay
     public GameObject currentOpenedOverlay;
 
+    // opens/closes overlay panels
     public static Action<OverlayPanelBase> SetOverlayPanel;
-    
+    public static Action OnInitialisePlayer;
+
+    // player references
+    [SerializeField] private Transform playerDefaultSpawnPosition;
     [SerializeField] private GameObject playerPrefab; // should load the player in 
     [SerializeField] private GameObject playerObject;
+    [SerializeField] private SwivelCamera playerCamera;
+    [SerializeField] private PlayerMovement playerMovement;
     [SerializeField] private CharacterController playerController;
+
+    // all input actions
+    public static InputSystem_Actions globalInputActions { get; private set; }
+
+    // settings regarding the player 
     [SerializeField] public PlayerSettings playerSettings;
 
     public static GameManager instance;
@@ -34,7 +47,41 @@ public class GameManager : MonoBehaviour
 
         DontDestroyOnLoad(gameObject);
 
+        globalInputActions = new InputSystem_Actions();
+        InitialisePlayerCharacter(); // this is here temporarily
+
         SaveSystem.Init();
+    }
+
+    private void OnEnable()
+    {
+        // save and load
+        globalInputActions.Player.Save.performed += Save;
+        globalInputActions.Player.Load.performed += Load;
+
+        globalInputActions.Enable();
+    }
+
+    private void OnDisable()
+    {
+        // save and load
+        globalInputActions.Player.Save.performed -= Save;
+        globalInputActions.Player.Load.performed -= Load;
+
+        globalInputActions.Disable();
+    }
+
+    private void InitialisePlayerCharacter()
+    {
+        // should initialise after entering the game scene from the main menu (or once a cinematic is over)
+        if (playerObject == null)
+        {
+            // will need a spawn position in future
+            playerObject = Instantiate(playerPrefab, playerDefaultSpawnPosition.position, Quaternion.identity);
+            playerCamera = playerObject.GetComponentInChildren<SwivelCamera>();
+            playerController = playerObject.GetComponent<CharacterController>();
+            playerMovement = playerObject.GetComponent<PlayerMovement>();
+        }
     }
 
     public void Save(InputAction.CallbackContext context)
@@ -76,8 +123,9 @@ public class GameManager : MonoBehaviour
                 playerController.Move(saveData.playerPosition - playerController.transform.position); // controller has full control over player position (cannot just use player.transform.position)
                 Debug.Log(saveData.playerPosition);
 
-                // camera (still need to setup a way to access the player camera)
-
+                // camera 
+                playerCamera.rotationSpeed = saveData.cameraRotationSpeed;
+                playerCamera.zoomSpeed = saveData.cameraZoomSpeed;
             }
             else
             {
@@ -91,7 +139,7 @@ public class GameManager : MonoBehaviour
         if (currentOpenedOverlay == null) { return; }
         else if (currentOpenedOverlay != null)
         {
-            if (currentOpenedOverlay.GetComponentInParent<OverlayPanelBase>().isEscMenu) { return; } // ensures the esc menu doesnt close as soon as it opens
+            if (currentOpenedOverlay.GetComponentInParent<OverlayPanelBase>().isEscMenu && currentOpenedOverlay.activeInHierarchy) { return; } // ensures the esc menu doesnt close as soon as it opens
         }
 
         if (context.performed)
@@ -101,13 +149,21 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void ApplyPlayerSettings()
+    {
+        // these settings will only be saved once pressing the save button, needs to happen when hitting apply
+        // player camera
+        playerCamera.rotationSpeed = playerSettings.cameraRotationSpeed;
+        playerCamera.zoomSpeed = playerSettings.cameraRotationSpeed;
+    }
+
     public void SetCamerSwivelSpeed(float value)
     {
-        playerSettings.cameraRotationSpeed = value;
+        playerSettings.cameraRotationSpeed = value * 100.0f;
     }
 
     public void SetCameraZoomSpeed(float value)
     {
-        playerSettings.cameraZoomSpeed = value;
+        playerSettings.cameraZoomSpeed = value * 100.0f;
     }
 }

@@ -13,8 +13,8 @@ public class SwivelCamera : MonoBehaviour
     [SerializeField] private Transform target;
     [SerializeField] private float distanceZ = 10.0f;
     [SerializeField] private float heightY = 2.0f;
-    public float rotationSpeed { get; private set; }
-    public float zoomSpeed { get; private set; }
+    public float rotationSpeed;
+    public float zoomSpeed;
     [SerializeField] private float maxHeight = 1.0f;
     [SerializeField] private float minHeight = 1.0f;
     [SerializeField] private float swivelRadius = 1.0f; // unused so far
@@ -24,9 +24,27 @@ public class SwivelCamera : MonoBehaviour
 
     private void OnEnable()
     {
+        // camera rotate
+        GameManager.globalInputActions.Player.CameraRotate.performed += SwivelCameraAction;
+        GameManager.globalInputActions.Player.CameraRotate.canceled += SwivelCameraAction;
+        GameManager.globalInputActions.Player.CameraRotate.started += SwivelCameraAction;
+        // camera zoom
+        GameManager.globalInputActions.Player.CameraZoom.performed += ZoomCameraAction;
+
+        // currently the default values (should load from player save)
         rotationSpeed = 50.0f;
         zoomSpeed = 50.0f;
         camera.transform.localPosition = new Vector3(0, heightY, distanceZ);
+    }
+
+    private void OnDisable()
+    {
+        // camera rotate
+        GameManager.globalInputActions.Player.CameraRotate.performed -= SwivelCameraAction;
+        GameManager.globalInputActions.Player.CameraRotate.canceled -= SwivelCameraAction;
+        GameManager.globalInputActions.Player.CameraRotate.started -= SwivelCameraAction;
+        // camera zoom
+        GameManager.globalInputActions.Player.CameraZoom.performed -= ZoomCameraAction;
     }
 
     private void LateUpdate()

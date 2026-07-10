@@ -9,12 +9,24 @@ public class OverlayPanelBase : MonoBehaviour, IOverlayPanel
     private void OnEnable()
     {
         GameManager.SetOverlayPanel += OpenOrClosePanelEvent;
+        if (isEscMenu)
+        {
+            GameManager.globalInputActions.Menus.PauseMenu.performed += OnPressOpenOrClosePanel;
+        }
+        GameManager.globalInputActions.UI.Escape.performed += GameManager.instance.OnPressClosePanel;
     }
 
     private void OnDisable()
     {
         GameManager.SetOverlayPanel -= OpenOrClosePanelEvent;
+
+        if (isEscMenu)
+        {
+            GameManager.globalInputActions.Menus.PauseMenu.performed -= OnPressOpenOrClosePanel;
+        }
+        GameManager.globalInputActions.UI.Escape.performed -= GameManager.instance.OnPressClosePanel;
     }
+
 
     // open panel (settings) pressing esc
     // close panel (settings) pressing esc
@@ -55,5 +67,10 @@ public class OverlayPanelBase : MonoBehaviour, IOverlayPanel
             panelObject.SetActive(false);
             GameManager.instance.currentOpenedOverlay = null;
         }
+    }
+
+    public void ClosePanelByButton()
+    {
+        GameManager.instance.currentOpenedOverlay = null;
     }
 }
