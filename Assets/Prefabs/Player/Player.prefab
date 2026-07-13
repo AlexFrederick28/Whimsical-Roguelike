@@ -366,7 +366,7 @@ Camera:
   field of view: 60
   orthographic: 0
   orthographic size: 5
-  m_Depth: -1
+  m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -449,6 +449,8 @@ MonoBehaviour:
   target: {fileID: 5070237602444118201}
   distanceZ: -10
   heightY: 10
+  rotationSpeed: 50
+  zoomSpeed: 50
   maxHeight: 10
   minHeight: 1
   swivelRadius: 1

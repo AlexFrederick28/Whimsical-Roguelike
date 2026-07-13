@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using UnityEditor.Overlays;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.Rendering;
@@ -106,6 +107,10 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Loads player game save data
+    /// </summary>
+    /// <param name="context"></param>
     public void Load(InputAction.CallbackContext context)
     {
         // currently loading by pressing 2, need to change to button on menu eventually
@@ -122,10 +127,6 @@ public class GameManager : MonoBehaviour
                 // player
                 playerController.Move(saveData.playerPosition - playerController.transform.position); // controller has full control over player position (cannot just use player.transform.position)
                 Debug.Log(saveData.playerPosition);
-
-                // camera 
-                playerCamera.rotationSpeed = saveData.cameraRotationSpeed;
-                playerCamera.zoomSpeed = saveData.cameraZoomSpeed;
             }
             else
             {
@@ -149,21 +150,55 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Applies player settings when in the settings menu
+    /// </summary>
     public void ApplyPlayerSettings()
     {
+        // need another save file for player settings (so that they dont save alongside a game save)
         // these settings will only be saved once pressing the save button, needs to happen when hitting apply
         // player camera
+        string json = JsonUtility.ToJson(playerSettings);
+        SaveSystem.SaveSettings(json);
         playerCamera.rotationSpeed = playerSettings.cameraRotationSpeed;
-        playerCamera.zoomSpeed = playerSettings.cameraRotationSpeed;
+        playerCamera.zoomSpeed = playerSettings.cameraZoomSpeed;
+    }
+
+    /// <summary>
+    /// Used on game start/open (applies player settings from last played)
+    /// </summary>
+    public void LoadPLayerSettings()
+    {
+        string saveString = SaveSystem.LoadSettings();
+
+        if (saveString != null)
+        {
+            Debug.Log("Loaded save");
+            SaveData saveData = JsonUtility.FromJson<SaveData>(saveString);
+
+            // camera 
+            playerCamera.rotationSpeed = saveData.cameraRotationSpeed;
+            playerCamera.zoomSpeed = saveData.cameraZoomSpeed;
+        }
+        else
+        {
+            Debug.LogError("No save file");
+        }
     }
 
     public void SetCamerSwivelSpeed(float value)
     {
-        playerSettings.cameraRotationSpeed = value * 100.0f;
+        playerSettings.cameraRotationSpeed = (value * 100.0f) * 2;
     }
 
     public void SetCameraZoomSpeed(float value)
     {
-        playerSettings.cameraZoomSpeed = value * 100.0f;
+        playerSettings.cameraZoomSpeed = (value * 100.0f) * 2;
+    }
+
+    // by default, if the players camera settings were loaded from a player save (which we should have seperate) the sliders on the menu wouldnt match (may not need this)
+    public void MatchCameraSettingsFromLoad()
+    {
+
     }
 }

@@ -34,4 +34,22 @@ public static class SaveSystem
         }
     }
 
+    public static void SaveSettings(string saveString)
+    {
+        File.WriteAllText(saveDirectory + "playerSettings.txt", saveString);
+    }
+
+    public static string LoadSettings()
+    {
+        if (File.Exists(saveDirectory + "playerSettings.txt"))
+        {
+            string saveString = File.ReadAllText(saveDirectory + "playerSettings.txt");
+            return saveString;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 }
