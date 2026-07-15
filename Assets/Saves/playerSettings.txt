@@ -1,0 +1,1 @@
+{"cameraRotationSpeed":200.0,"cameraZoomSpeed":200.0}

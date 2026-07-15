@@ -31,7 +31,7 @@ public class GameManager : MonoBehaviour
     public static InputSystem_Actions globalInputActions { get; private set; }
 
     // settings regarding the player 
-    [SerializeField] public PlayerSettings playerSettings;
+    public PlayerSettings playerSettings;
 
     public static GameManager instance;
 
@@ -96,9 +96,6 @@ public class GameManager : MonoBehaviour
                 // player
                 playerPosition = playerObject.transform.position,
 
-                // camera
-                cameraRotationSpeed = playerSettings.cameraRotationSpeed,
-                cameraZoomSpeed = playerSettings.cameraZoomSpeed
             };
 
             string json = JsonUtility.ToJson(saveData);
@@ -160,6 +157,7 @@ public class GameManager : MonoBehaviour
         // player camera
         string json = JsonUtility.ToJson(playerSettings);
         SaveSystem.SaveSettings(json);
+        Debug.Log("Saved applied settings");
         playerCamera.rotationSpeed = playerSettings.cameraRotationSpeed;
         playerCamera.zoomSpeed = playerSettings.cameraZoomSpeed;
     }
@@ -174,7 +172,7 @@ public class GameManager : MonoBehaviour
         if (saveString != null)
         {
             Debug.Log("Loaded save");
-            SaveData saveData = JsonUtility.FromJson<SaveData>(saveString);
+            PlayerSettings saveData = JsonUtility.FromJson<PlayerSettings>(saveString);
 
             // camera 
             playerCamera.rotationSpeed = saveData.cameraRotationSpeed;
@@ -194,11 +192,5 @@ public class GameManager : MonoBehaviour
     public void SetCameraZoomSpeed(float value)
     {
         playerSettings.cameraZoomSpeed = (value * 100.0f) * 2;
-    }
-
-    // by default, if the players camera settings were loaded from a player save (which we should have seperate) the sliders on the menu wouldnt match (may not need this)
-    public void MatchCameraSettingsFromLoad()
-    {
-
     }
 }
