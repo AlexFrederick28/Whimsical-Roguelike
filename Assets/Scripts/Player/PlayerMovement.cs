@@ -1,3 +1,4 @@
+using System.Collections;
 using Unity.VisualScripting.InputSystem;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -10,8 +11,11 @@ public class PlayerMovement : MonoBehaviour
 {
     private float speed;
     [SerializeField] private float runSpeed;
-    [SerializeField] private float fallSpeed;
+    [SerializeField] private float fallingMoveSpeed;
     [SerializeField] private float gravity = -9.81f; // default unity gravity
+    [SerializeField] private float jumpHeight = 10f;
+    [Tooltip("Keep negative number")]
+    [SerializeField] private float jumpCurve = -2f; 
     [SerializeField] private CharacterController characterController;
     [SerializeField] private Transform characterView;
     [SerializeField] private Transform cameraTransform;
@@ -19,6 +23,14 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector2 inputVector;
     [SerializeField] private Vector3 moveDirection;
     [SerializeField] private Vector3 fallVelocity;
+
+    [Space]
+    [Header("Ground Detection")]
+    [SerializeField] private float sphereRadius = 0.15f;
+    [SerializeField] private Collider collider;
+    [SerializeField] private Vector3 colliderBottom;    
+    [SerializeField] private LayerMask colliderLayer;
+    private RaycastHit hit;
 
     private bool moveCancelled = false;
 
@@ -28,6 +40,8 @@ public class PlayerMovement : MonoBehaviour
         GameManager.globalInputActions.Player.Move.performed += OnMove;
         GameManager.globalInputActions.Player.Move.canceled += OnMove;
         GameManager.globalInputActions.Player.Move.started += OnMove;
+
+        GameManager.globalInputActions.Player.Jump.performed += OnJump;
     }
 
     private void OnDisable()
@@ -36,10 +50,14 @@ public class PlayerMovement : MonoBehaviour
         GameManager.globalInputActions.Player.Move.performed -= OnMove;
         GameManager.globalInputActions.Player.Move.canceled -= OnMove;
         GameManager.globalInputActions.Player.Move.started -= OnMove;
+
+        GameManager.globalInputActions.Player.Jump.performed += OnJump;
     }
 
     private void Update()
     {
+        GetGroundedDetectionPosition();
+        IsGrounded();
         Movement();
     }
 
@@ -67,20 +85,63 @@ public class PlayerMovement : MonoBehaviour
         moveDirection = (camForward.normalized * inputVector.y).normalized + (camRight * inputVector.x).normalized;
         characterController.Move(moveDirection.normalized * speed * Time.deltaTime);
 
-        // resets force of gravity when grounded
-        if (characterController.isGrounded && fallVelocity.y < 0)
+        if (IsGrounded() == false)
         {
+            // applies gravity over time (for falling) - character controller needs constant gravity to be touching the ground
+            Debug.Log("Applying gravity");
+            fallVelocity.y += gravity * Time.deltaTime;
+            speed = fallingMoveSpeed;
+        }
+        else if (IsGrounded() == true)
+        {
+            // resets force of gravity when grounded
+            Debug.Log("reset gravity");
             fallVelocity.y = -2f; // Slight downward force keeps character pinned to slopes
-            characterController.Move(fallVelocity * Time.deltaTime);
             speed = runSpeed;
         }
 
-        // applies gravity over time (for falling) - character controller needs constant gravity to be touching the ground
-        fallVelocity.y += gravity * Time.deltaTime;
+        // constantly applying gravity
         characterController.Move(fallVelocity * Time.deltaTime);
-        speed = fallSpeed;
+        //Debug.Log(characterController.isGrounded);
 
         if (moveCancelled || moveDirection == Vector3.zero) { return; } // stops the character from rotating back to the default position
         characterView.rotation = Quaternion.LookRotation(moveDirection);
+    }
+
+    public void OnJump(InputAction.CallbackContext context)
+    {
+        if (context.performed && IsGrounded())
+        {
+            Debug.Log("Jumped");
+
+            fallVelocity.y = Mathf.Sqrt(jumpHeight * jumpCurve * gravity);
+        }
+    }
+
+    public bool IsGrounded()
+    {
+        if (hit.transform != null)
+        {
+            Debug.Log(hit.transform.name);
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public void OnDrawGizmos()
+    {
+        Gizmos.DrawWireSphere(colliderBottom, sphereRadius);
+        Gizmos.DrawWireSphere(new Vector3(colliderBottom.x, colliderBottom.y - 1f, colliderBottom.z), sphereRadius);
+        
+    }
+
+    private void GetGroundedDetectionPosition()
+    {
+        colliderBottom = new Vector3(collider.bounds.center.x, collider.bounds.min.y + 1f, collider.bounds.center.z);
+
+        Physics.SphereCast(colliderBottom, sphereRadius, Vector3.down, out hit, 1f, colliderLayer);
     }
 }

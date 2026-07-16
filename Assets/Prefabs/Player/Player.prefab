@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5661423670417351934}
   - component: {fileID: 4075302020981351267}
   - component: {fileID: 6307871882025916502}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Player
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -81,14 +81,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   runSpeed: 20
-  fallSpeed: 10
-  gravity: -50
+  fallingMoveSpeed: 10
+  gravity: -9.81
+  jumpHeight: 2
+  jumpCurve: -2
   characterController: {fileID: 6307871882025916502}
   characterView: {fileID: 3714495532192119146}
   cameraTransform: {fileID: 8020157299706926515}
   inputVector: {x: 0, y: 0}
   moveDirection: {x: 0, y: 0, z: 0}
   fallVelocity: {x: 0, y: 0, z: 0}
+  sphereRadius: 0.5
+  collider: {fileID: 5661423670417351934}
+  colliderBottom: {x: 0, y: 0, z: 0}
+  colliderLayer:
+    serializedVersion: 2
+    m_Bits: 1
 --- !u!143 &6307871882025916502
 CharacterController:
   m_ObjectHideFlags: 0
@@ -125,7 +133,7 @@ GameObject:
   - component: {fileID: 7601282885890305513}
   - component: {fileID: 5885936383877692427}
   - component: {fileID: 4871368424801664634}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -215,7 +223,7 @@ GameObject:
   - component: {fileID: 3714495532192119146}
   - component: {fileID: 3592624790844639939}
   - component: {fileID: 2487635100220881570}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: View
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -308,7 +316,7 @@ GameObject:
   - component: {fileID: 411928902510054959}
   - component: {fileID: 7341451749736131346}
   - component: {fileID: 36430858068344549}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Swivel Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
