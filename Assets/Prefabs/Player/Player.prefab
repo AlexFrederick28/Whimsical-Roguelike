@@ -81,9 +81,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMovement
   runSpeed: 20
-  fallingMoveSpeed: 10
+  fallingMoveSpeed: 12
   gravity: -9.81
-  jumpHeight: 2
+  weight: 4
+  jumpHeight: 5
   jumpCurve: -2
   characterController: {fileID: 6307871882025916502}
   characterView: {fileID: 3714495532192119146}

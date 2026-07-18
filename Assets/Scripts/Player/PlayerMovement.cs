@@ -13,6 +13,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runSpeed;
     [SerializeField] private float fallingMoveSpeed;
     [SerializeField] private float gravity = -9.81f; // default unity gravity
+    [SerializeField] private float weight = 2; 
     [SerializeField] private float jumpHeight = 10f;
     [Tooltip("Keep negative number")]
     [SerializeField] private float jumpCurve = -2f; 
@@ -31,6 +32,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Vector3 colliderBottom;    
     [SerializeField] private LayerMask colliderLayer;
     private RaycastHit hit;
+    private bool isJumping = false;
 
     private bool moveCancelled = false;
 
@@ -89,10 +91,10 @@ public class PlayerMovement : MonoBehaviour
         {
             // applies gravity over time (for falling) - character controller needs constant gravity to be touching the ground
             Debug.Log("Applying gravity");
-            fallVelocity.y += gravity * Time.deltaTime;
+            fallVelocity.y += gravity * weight * Time.deltaTime;
             speed = fallingMoveSpeed;
         }
-        else if (IsGrounded() == true)
+        else if (IsGrounded() == true && isJumping == false)
         {
             // resets force of gravity when grounded
             Debug.Log("reset gravity");
@@ -102,7 +104,6 @@ public class PlayerMovement : MonoBehaviour
 
         // constantly applying gravity
         characterController.Move(fallVelocity * Time.deltaTime);
-        //Debug.Log(characterController.isGrounded);
 
         if (moveCancelled || moveDirection == Vector3.zero) { return; } // stops the character from rotating back to the default position
         characterView.rotation = Quaternion.LookRotation(moveDirection);
@@ -113,9 +114,19 @@ public class PlayerMovement : MonoBehaviour
         if (context.performed && IsGrounded())
         {
             Debug.Log("Jumped");
-
+            StartCoroutine(JumpC());
             fallVelocity.y = Mathf.Sqrt(jumpHeight * jumpCurve * gravity);
         }
+    }
+
+    public IEnumerator JumpC()
+    {
+        // jumping needs a slight delay in gravity so the jump can occur
+        isJumping = true;
+
+        yield return new WaitForSeconds(0.1f);
+
+        isJumping = false;
     }
 
     public bool IsGrounded()
