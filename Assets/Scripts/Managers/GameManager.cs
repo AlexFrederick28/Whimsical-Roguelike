@@ -12,6 +12,8 @@ public class GameManager : MonoBehaviour
     // load the extra managers and whatnot when entering the game
     // load save files
 
+    public StateMachine stateMachine { get; private set; }
+
     // the registered on top UI overlay
     public GameObject currentOpenedOverlay;
 
@@ -52,6 +54,7 @@ public class GameManager : MonoBehaviour
         InitialisePlayerCharacter(); // this is here temporarily
 
         SaveSystem.Init();
+        stateMachine = new StateMachine();
     }
 
     private void OnEnable()

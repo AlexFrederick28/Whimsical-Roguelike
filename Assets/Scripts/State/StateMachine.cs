@@ -3,16 +3,18 @@ using UnityEngine;
 /// <summary>
 /// Handles game states
 /// </summary>
-public class StateMachine : MonoBehaviour
+/// 
+
+public class StateMachine 
 {
     public enum GameStates { MainMenu, PlayerShop, PlayerInventory, PauseMenu, Combat, Decorating }
     public enum OpenUIStates { OpenUI, ClosedUI }
     public enum PausedStates { Paused, Unpaused }
 
-    private GameStates currentState;
-    private GameStates previousState;
-    private OpenUIStates UIState;
-    private PausedStates pausedState;
+    public GameStates currentState;
+    public GameStates previousState;
+    public OpenUIStates UIState;
+    public PausedStates pausedState;
 
     public GameStates GetCurrentState()
     {
