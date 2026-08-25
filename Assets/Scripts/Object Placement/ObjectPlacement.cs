@@ -16,8 +16,31 @@ public class ObjectPlacement : MonoBehaviour
         Vector3 mousePos = PlayerMouseCursor.GetMousePosition3D();
     }
 
+    // should start to show when the object has been selected
+    public void ShowObjectGhost()
+    {
+        if (objectToPlace == null) { return; }
+        // show the ghost of the object the player is about to place
+        objectToPlace.GetComponent<ShopObject>().DisplayTransparent();
+    }
+
+    // should stop showing when another object has been selected, or when nothing is selected
+    public void DisableObjectGhost()
+    {
+        if (objectToPlace == null) { return; }
+        objectToPlace.GetComponent<ShopObject>().DisplayLit();
+    }
+
+    // using Q and E
+    public void RotateObject()
+    {
+        if (objectToPlace == null) { return; }
+    }
+
+    // Left click
     public void PlaceObject()
     {
+        if (GameManager.instance.stateMachine.currentState != StateMachine.GameStates.Decorating) { return; } 
         if (objectToPlace == null) { return; }
 
         //Instantiate(objectToPlace, mousePos, );

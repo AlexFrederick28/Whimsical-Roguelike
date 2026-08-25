@@ -90,14 +90,14 @@ public class PlayerMovement : MonoBehaviour
         if (IsGrounded() == false)
         {
             // applies gravity over time (for falling) - character controller needs constant gravity to be touching the ground
-            Debug.Log("Applying gravity");
+            //Debug.Log("Applying gravity");
             fallVelocity.y += gravity * weight * Time.deltaTime;
             speed = fallingMoveSpeed;
         }
         else if (IsGrounded() == true && isJumping == false)
         {
             // resets force of gravity when grounded
-            Debug.Log("reset gravity");
+            //Debug.Log("reset gravity");
             fallVelocity.y = -2f; // Slight downward force keeps character pinned to slopes
             speed = runSpeed;
         }
@@ -113,7 +113,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (context.performed && IsGrounded())
         {
-            Debug.Log("Jumped");
+            //Debug.Log("Jumped");
             StartCoroutine(JumpC());
             fallVelocity.y = Mathf.Sqrt(jumpHeight * jumpCurve * gravity);
         }
@@ -133,7 +133,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (hit.transform != null)
         {
-            Debug.Log(hit.transform.name);
+            //Debug.Log(hit.transform.name);
             return true;
         }
         else
@@ -146,7 +146,6 @@ public class PlayerMovement : MonoBehaviour
     {
         Gizmos.DrawWireSphere(colliderBottom, sphereRadius);
         Gizmos.DrawWireSphere(new Vector3(colliderBottom.x, colliderBottom.y - 1f, colliderBottom.z), sphereRadius);
-        
     }
 
     private void GetGroundedDetectionPosition()
