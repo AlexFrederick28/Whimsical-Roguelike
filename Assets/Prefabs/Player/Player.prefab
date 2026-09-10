@@ -97,7 +97,7 @@ MonoBehaviour:
   colliderBottom: {x: 0, y: 0, z: 0}
   colliderLayer:
     serializedVersion: 2
-    m_Bits: 1
+    m_Bits: 2048
 --- !u!143 &6307871882025916502
 CharacterController:
   m_ObjectHideFlags: 0

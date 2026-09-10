@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ShopObject : MonoBehaviour
 {
+    [SerializeField] private PlaceableObject objectInfoSO;
     [SerializeField] private MeshRenderer meshRenderer;
     [SerializeField] private Material transparentMaterial;
     [SerializeField] private Material litMaterial;

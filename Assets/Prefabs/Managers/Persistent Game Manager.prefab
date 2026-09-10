@@ -790,6 +790,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4182944378807619964}
   - component: {fileID: 1923909908506957595}
+  - component: {fileID: 5586848655250417869}
   m_Layer: 0
   m_Name: Persistent Game Manager
   m_TagString: Untagged
@@ -836,6 +837,23 @@ MonoBehaviour:
   playerSettings:
     cameraRotationSpeed: 0
     cameraZoomSpeed: 0
+--- !u!114 &5586848655250417869
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2198415075748518362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6291f7682187cb348b2a9680cb882e43, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DecoratingManager
+  placedDecorationsList: []
+  selectedDecoration: {fileID: 0}
+  groundCheckLayer:
+    serializedVersion: 2
+    m_Bits: 2048
 --- !u!1 &3410631971080676570
 GameObject:
   m_ObjectHideFlags: 0
