@@ -8,11 +8,11 @@ using UnityEngine.InputSystem;
 public class DecoratingManager : MonoBehaviour
 {
     public static Action<GameObject> onSelectedDecoration;
-    public static Action<GameObject> onDeSelectedDecoration;
+    public static Action onDeSelectedDecoration;
     public static Action<GameObject> onPlacedDecoration;
-    public static Action<GameObject> onRemovedDecoration;
+    public static Action<GameObject> onRemovedDecoration; // cannot remove a decoration yet
 
-    public List<GameObject> placedDecorationsList = new List<GameObject>();
+    public List<GameObject> placedDecorationsList = new List<GameObject>(); // unused
 
     public GameObject selectedDecoration;
 
@@ -37,18 +37,28 @@ public class DecoratingManager : MonoBehaviour
     private void SelectedDecoration(GameObject decoration)
     {
         selectedDecoration = decoration;
+        
+
+        ShopObject obj = decoration.GetComponent<ShopObject>();
+        obj.DisplayTransparent();
     }
 
-    private void DeSelectDecoration(GameObject decoration)
+    private void DeSelectDecoration()
     {
-        //selectedDecoration = null;
+        if (selectedDecoration != null)
+        {
+            ShopObject obj = selectedDecoration.GetComponent<ShopObject>();
+            obj.DisplayLit();
+
+            selectedDecoration = null;
+        }
     }
 
     private void Update()
     {
         if (GameManager.instance.stateMachine.currentState != StateMachine.GameStates.Decorating)
         {
-            //ensures that the selected object goes away if the player is no longer decorating
+            //ensures that the selected object goes away if the player is no longer decorating - not in use due to decorating state not currently working from the state machine
             //if (spawnedObject != null)
             //{
             //    Destroy(spawnedObject);
@@ -65,7 +75,7 @@ public class DecoratingManager : MonoBehaviour
 
     private void PlaceDecoration(InputAction.CallbackContext context)
     {
-        onPlacedDecoration?.Invoke(selectedDecoration);
-        selectedDecoration = null;
+        onPlacedDecoration?.Invoke(selectedDecoration); // currently unused
+        DeSelectDecoration();
     }
 }

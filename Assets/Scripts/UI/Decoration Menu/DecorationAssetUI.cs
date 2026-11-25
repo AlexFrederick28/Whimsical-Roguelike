@@ -25,7 +25,7 @@ public class DecorationAssetUI : MonoBehaviour, IPointerClickHandler, IPointerEn
     {
         if (spawnedObject != null)
         {
-            DecoratingManager.onDeSelectedDecoration?.Invoke(spawnedObject);
+            DecoratingManager.onDeSelectedDecoration?.Invoke();
             Destroy(spawnedObject);
             spawnedObject = null;
         }
